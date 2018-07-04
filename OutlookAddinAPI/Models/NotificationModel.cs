@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Newtonsoft.Json;
 
-namespace OutlookAddinAPI.Models
+namespace OutlookNotificationsAPI.Models
 {
     public class NotificationModel
     {
