@@ -276,6 +276,7 @@
     <Compile Include="Models\AdalTokenCache.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\CalendarEventModel.cs" />
+    <Compile Include="Models\MailItem.cs" />
     <Compile Include="Models\NotificationModel.cs" />
     <Compile Include="Models\PushSubscriptionModel.cs" />
     <Compile Include="Models\ResourceDataModel.cs" />
