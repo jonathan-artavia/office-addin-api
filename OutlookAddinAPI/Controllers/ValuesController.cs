@@ -42,13 +42,13 @@ namespace OutlookAddinAPI.Controllers
                         {
                             System.Data.DataTable tb = prov.FindByConversationId(id);
                             prov.SaveEmail(body, long.Parse(tb.Rows[0]["ID"].ToString()));
-                            return "True";
+                            return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = true } );
                         }
-                        return "False";
+                        return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
                     }
                     else
                     {
-                        return "False";
+                        return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
                     }
                 }
                 else
@@ -104,14 +104,15 @@ namespace OutlookAddinAPI.Controllers
                 }
                 else
                 {
-                    throw new InvalidCastException("Mail JSON string arrived empty or with wrong format");
+                    throw new InvalidCastException("Error: Mail JSON string arrived empty or with wrong format");
                 }
                 return "no.";
             }
             catch (Exception ex)
             {
-                MailItem usItem = Newtonsoft.Json.JsonConvert.DeserializeObject<MailItem>(body);
-                return "Error: " + ex.Message + "\r\n\r\n" + Newtonsoft.Json.JsonConvert.SerializeObject(usItem) + "\r\n\r\n" + ex.StackTrace;
+                //MailItem usItem = Newtonsoft.Json.JsonConvert.DeserializeObject<MailItem>(body);
+                //return "Error: " + ex.Message + "\r\n\r\n" + Newtonsoft.Json.JsonConvert.SerializeObject(usItem) + "\r\n\r\n" + ex.StackTrace;
+                throw ex;
             }
         }
     }
