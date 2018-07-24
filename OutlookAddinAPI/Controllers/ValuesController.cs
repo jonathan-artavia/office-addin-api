@@ -17,9 +17,9 @@ namespace OutlookAddinAPI.Controllers
         {
             return new string[] { "No 'id' specified" };
         }
-        // GET api/values/tracked?id=5
+
         [HttpPost]
-        [System.Web.Http.Cors.EnableCors("*", "*", "*"), ActionName("tracked")]
+        [System.Web.Http.Cors.EnableCors("*", "*", "POST"), ActionName("tracked")]
         public string Get(string id)
         {
             string body = string.Empty;
@@ -30,31 +30,38 @@ namespace OutlookAddinAPI.Controllers
                 //stream.Seek(0, SeekOrigin.Begin);
                 body = stream.ReadToEnd(); //Newtonsoft.Json.JsonConvert.SerializeObject(re);;
             }
-            
-            using (MailTrackerProvider prov = new MailTrackerProvider())
+            try
             {
-                if (!string.IsNullOrEmpty(body))
+                using (MailTrackerProvider prov = new MailTrackerProvider())
                 {
-                    if (prov.OpenConnection())
+                    if (!string.IsNullOrEmpty(body))
                     {
-
-                        if (prov.IsTracked(System.Web.HttpUtility.UrlDecode(id)))
+                        if (prov.OpenConnection())
                         {
-                            System.Data.DataTable tb = prov.FindByConversationId(id);
-                            prov.SaveEmail(body, long.Parse(tb.Rows[0]["ID"].ToString()));
-                            return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = true } );
+
+                            if (prov.IsTracked(System.Web.HttpUtility.UrlDecode(id)))
+                            {
+                                System.Data.DataTable tb = prov.FindByConversationId(id);
+                                prov.SaveEmail(body, long.Parse(tb.Rows[0]["ID"].ToString()));
+                                return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = true });
+                            }
+                            return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
                         }
-                        return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
+                        else
+                        {
+                            return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
+                        }
                     }
                     else
                     {
-                        return Newtonsoft.Json.JsonConvert.SerializeObject(new { IsTracked = false });
+                        throw new InvalidCastException("Mail JSON string arrived empty or with wrong format");
                     }
                 }
-                else
-                {
-                    throw new InvalidCastException("Mail JSON string arrived empty or with wrong format");
-                }
+            }
+            catch (Exception ex)
+            {
+                IncomingRequest usItem = Newtonsoft.Json.JsonConvert.DeserializeObject<IncomingRequest>(body);
+                return "Error: " + ex.Message + "\r\n\r\n" + Newtonsoft.Json.JsonConvert.SerializeObject(usItem) + "\r\n\r\n" + ex.StackTrace;
             }
         }
 
@@ -75,9 +82,11 @@ namespace OutlookAddinAPI.Controllers
 
                 if (!string.IsNullOrEmpty(body))
                 {
-                    MailItem usItem = Newtonsoft.Json.JsonConvert.DeserializeObject<MailItem>(body); //MailItem.FromJson(body);
-                    if (usItem != null)
+                    IncomingRequest req = Newtonsoft.Json.JsonConvert.DeserializeObject<IncomingRequest>(body); //MailItem.FromJson(body);
+                    
+                    if (req != null && req.MailItem != null)
                     {
+                        MailItem usItem = req.MailItem;
                         using (MailTrackerProvider prov = new MailTrackerProvider())
                         {
                             prov.OpenConnection();

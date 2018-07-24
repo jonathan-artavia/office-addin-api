@@ -10,9 +10,9 @@ namespace OutlookAddinAPI
     {
         public static void Register(HttpConfiguration config)
         {
-            //string origin = "https://10.111.111.219:3000/";
+            //string origin = "https://10.111.111.224:3000/";
 
-            //EnableCorsAttribute cors = new EnableCorsAttribute(origin, "*", "GET,POST");
+            //EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "POST");
 
             config.EnableCors();
             // Web API configuration and services

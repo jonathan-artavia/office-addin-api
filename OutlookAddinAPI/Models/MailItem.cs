@@ -12,22 +12,25 @@ namespace OutlookAddinAPI.Models
     //
     //    var mailItem = MailItem.FromJson(jsonString);
 
+    public partial class IncomingRequest
+    {
+        [JsonProperty("MailItem")]
+        public MailItem MailItem { get; set; }
+
+        [JsonProperty("TravWebLogin")]
+        public TravWebLogin TravWebLogin { get; set; }
+    }
+
     public partial class MailItem
     {
         [JsonProperty("_data$p$0")]
         public MailItemDataP0 DataP0 { get; set; }
 
-        [JsonProperty("_body$p$1")]
-        public object BodyP1 { get; set; }
-
-        [JsonProperty("_notificationMessages$p$0")]
-        public object NotificationMessagesP0 { get; set; }
-
-        [JsonProperty("displayName")]
+        [JsonProperty("DisplayName")]
         public string DisplayName { get; set; }
 
-        [JsonProperty("bodytext")]
-        public string Bodytext { get; set; }
+        [JsonProperty("BodyText")]
+        public string BodyText { get; set; }
     }
 
     public partial class MailItemDataP0
@@ -45,7 +48,7 @@ namespace OutlookAddinAPI.Models
         public long PermissionLevel { get; set; }
 
         [JsonProperty("timeZoneOffsets")]
-        public TimeZoneOffset[] TimeZoneOffsets { get; set; }
+        public List<TimeZoneOffset> TimeZoneOffsets { get; set; }
 
         [JsonProperty("hostVersion")]
         public string HostVersion { get; set; }
@@ -111,7 +114,7 @@ namespace OutlookAddinAPI.Models
         public From Sender { get; set; }
 
         [JsonProperty("to")]
-        public From[] To { get; set; }
+        public List<From> To { get; set; }
 
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -132,7 +135,7 @@ namespace OutlookAddinAPI.Models
         public Entities Entities { get; set; }
 
         [JsonProperty("filteredEntities")]
-        public object FilteredEntities { get; set; }
+        public FilteredEntities FilteredEntities { get; set; }
 
         [JsonProperty("subject")]
         public string Subject { get; set; }
@@ -141,7 +144,7 @@ namespace OutlookAddinAPI.Models
         public string NormalizedSubject { get; set; }
 
         [JsonProperty("attachments")]
-        public Attachment[] Attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
     }
 
     public partial class Attachment
@@ -192,6 +195,10 @@ namespace OutlookAddinAPI.Models
         public object TaskSuggestions { get; set; }
     }
 
+    public partial class FilteredEntities
+    {
+    }
+
     public partial class From
     {
         [JsonProperty("name")]
@@ -216,14 +223,29 @@ namespace OutlookAddinAPI.Models
         public long Offset { get; set; }
     }
 
-    public partial class MailItem
+    public partial class TravWebLogin
     {
-        public static MailItem FromJson(string json) => JsonConvert.DeserializeObject<MailItem>(json, Converter.Settings);
+        [JsonProperty("TravUser")]
+        public string TravUser { get; set; }
+
+        [JsonProperty("TravPassword")]
+        public string TravPassword { get; set; }
+
+        [JsonProperty("TravTrusted")]
+        public bool TravTrusted { get; set; }
+
+        [JsonProperty("TravToken")]
+        public string TravToken { get; set; }
+    }
+
+    public partial class IncomingRequest
+    {
+        public static IncomingRequest FromJson(string json) => JsonConvert.DeserializeObject<IncomingRequest>(json, Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this MailItem self) => JsonConvert.SerializeObject(self, Converter.Settings);
+        public static string ToJson(this IncomingRequest self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     internal static class Converter

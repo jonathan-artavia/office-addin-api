@@ -110,7 +110,9 @@ namespace OutlookAddinAPI
 
         public virtual bool SaveEmail(string body, long trackerID)
         {
-            MailItem mailItem = MailItem.FromJson(body);
+            IncomingRequest req = IncomingRequest.FromJson(body);
+
+            MailItem mailItem = req.MailItem;
             if (mailItem != null)
             {
                 if (this.IsTracked(trackerID))
